@@ -1,23 +1,17 @@
-#!/usr/bin/env bash
-
-readonly ARGC=$#
-readonly FILESDIR=$1
-readonly SEARCHSTR=$2
-
-if [[ $ARGC -eq 0 ]]; then
-    echo "Missing filesdir and searchstr arguments!" >&2
+#!/bin/bash
+filesdir=$1
+searchstr=$2
+if [ $# != 2 ]
+then
+    echo "Wrong number of arguments. It should be directory name and string to find"
     exit 1
-elif [[ $ARGC -eq 1 ]]; then
-    echo "Missing searchstr argument!" >&2
+fi
+if [ ! -d "$1" ]
+then
+    echo "Directory does not exists"
     exit 1
 fi
 
-if [ ! -d $FILESDIR ]; then
-    echo "Directory '$FILESDIR' does not exist!" >&2
-    exit 1
-fi
-
-readonly NUM_FILES=$(find $FILESDIR -type f | wc -l)
-readonly NUM_MATCHES=$(grep -roh $SEARCHSTR $FILESDIR | wc -w)
-
-echo "The number of files are $NUM_FILES and the number of matching lines are $NUM_MATCHES."
+numberOfFiles=$(find $1 -type f | wc -l)
+numberOfMatchingWords=$(grep -Rnw "$1" -e $2 | wc -l )
+echo "The number of files are $numberOfFiles and the number of matching lines are $numberOfMatchingWords"
